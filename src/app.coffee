@@ -4,13 +4,14 @@ client = new (elasticsearch.Client)(
     'https://251a506566f18dc3001.qbox.io'
     'https://251a506566f18dc3002.qbox.io'
   ]
-  log: 'trace')
+  # log: 'trace'
+  )
 
 aggregations = client.search(
   'index': 'development-categories-products'
   'size': 0
   'body': 'aggs':
-    'class': 'terms': 'field': 'product_class'
+    'product_class': 'terms': 'field': 'product_class'
     'supercat': 'terms': 'field': 'supercat'
     'category': 'terms': 'field': 'category'
     'product_type': 'terms': 'field': 'product_type'
@@ -19,13 +20,13 @@ aggregations = client.search(
 
 $ ->
   appView = new App.MainView
+  window.productsCollection = new App.Products
+  searchView = new App.SearchView({client: client, collection: productsCollection})
+  searchControlsView = new App.SearchControlsView
+  window.filters = new App.Filters()
   aggregations.then (body) =>
-    window.filters = new App.Filters
-    for key, value of body.aggregations
-      for bucket in value.buckets
-        bucket.filter_type = key
-        # console.log("#{key} #{bucket.key}")
+    for filterType, aggregation of body.aggregations
+      new App.FilterGroupView({filterType: filterType})
+      for bucket in aggregation.buckets
+        bucket.filterType = filterType
         window.filters.push( new App.Filter(bucket) )
-  # window.filters.each (filter) ->
-  #   new App.FilterView({model: filter})
-      # new App.FilterView({title: key, buckets: value.buckets})
