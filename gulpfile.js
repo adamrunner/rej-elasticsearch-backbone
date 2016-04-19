@@ -8,14 +8,20 @@ var concat     = require('gulp-concat');
 var handlebars = require('gulp-handlebars');
 var wrap       = require('gulp-wrap');
 var declare    = require('gulp-declare');
+var inject     = require('gulp-inject');
 
 gulp.task('coffee', function() {
   gulp.src(['src/models/*.coffee','src/views/*.coffee','src/app.coffee'])
     .pipe(coffee({bare: true}).on('error', gutil.log))
-    .pipe(concat('app.js'))
+    // .pipe(concat('app.js'))
     .pipe(gulp.dest('./public/js/'));
 });
-
+//TODO: Fix this so it goes in a certain order, maybe? 
+gulp.task('inject', function(){
+  gulp.src('public/index.html')
+  .pipe(inject(gulp.src(['public/**/*.js', 'public/**/*.css'], {read: false} ), {starttag: '<!-- inject:{{ext}} -->', relative:true}))
+  .pipe(gulp.dest('public'));
+})
 
 gulp.task('styles', function() {
     gulp.src('sass/**/*.scss')
@@ -41,11 +47,11 @@ gulp.task('templates', function(){
 //Watch task
 
 gulp.task('watch',function() {
-  gulp.watch('src/index.html', ['copy']);
-  gulp.watch('src/**/*.coffee', ['coffee']);
+  // gulp.watch('src/index.html', ['copy']);
+  gulp.watch('src/**/*.coffee', ['coffee', 'inject']);
   gulp.watch('src/**/*.js', ['browserify']);
-  gulp.watch('sass/**/*.scss',['styles']);
-  gulp.watch('src/templates/**/*.hbs', ['templates']);
+  gulp.watch('sass/**/*.scss',['styles', 'inject']);
+  gulp.watch('src/templates/**/*.hbs', ['templates', 'inject']);
 
 });
 
@@ -70,4 +76,4 @@ gulp.task('copy', function() {
     .pipe(gulp.dest('public'));
 });
 
-gulp.task('default', ['styles', 'coffee', 'copy', 'templates', 'browserify', 'webserver', 'watch']);
+gulp.task('default', ['copy', 'styles', 'coffee', 'templates', 'browserify', 'inject', 'webserver', 'watch']);

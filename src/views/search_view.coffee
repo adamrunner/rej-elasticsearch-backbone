@@ -1,6 +1,7 @@
 class App.SearchView extends Backbone.View
   id: "searchResults"
   className: "row"
+  template: App.templates["search_summary"]
   initialize: (options) ->
     @listenTo(@collection, 'reset', @render)
     @listenTo(Backbone, 'filters:change', @doSearch)
@@ -16,7 +17,7 @@ class App.SearchView extends Backbone.View
       'index': 'development-categories-products'
       'size': 10
     @doSearch()
-    
+
   doSearch: (query) ->
     _.extend( @currentQuery, query )
     @client.search(@currentQuery).then (results) =>
@@ -30,6 +31,8 @@ class App.SearchView extends Backbone.View
   render: () ->
     productViews = @collection.map (product) =>
       new App.ProductView(model:product).$el
+
     @$el.html(productViews)
+
     $("#app").after(@$el)
     @

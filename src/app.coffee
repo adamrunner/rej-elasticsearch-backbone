@@ -4,7 +4,7 @@ client = new (elasticsearch.Client)(
     'https://251a506566f18dc3001.qbox.io'
     'https://251a506566f18dc3002.qbox.io'
   ]
-  # log: 'trace'
+  log: 'trace'
   )
 
 aggregations = client.search(
@@ -12,6 +12,7 @@ aggregations = client.search(
   'size': 0
   'body': 'aggs':
     'product_class': 'terms': 'field': 'product_class'
+    'categories' : 'terms' : 'field' : 'categories'
     'supercat': 'terms': 'field': 'supercat'
     'category': 'terms': 'field': 'category'
     'product_type': 'terms': 'field': 'product_type'

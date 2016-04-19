@@ -1,5 +1,4 @@
 class App.FilterGroupView extends Backbone.View
-  # template: App.templates['filter_group']
   initialize: (options) ->
     @filterType = options.filterType
     @$el.prop('id', @filterType)
