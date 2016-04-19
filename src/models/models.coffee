@@ -10,5 +10,5 @@ class App.Filters extends Backbone.Collection
   model: App.Filter
   initialize: ->
     @on "add", (model) ->
-      console.log("filter added #{model.attributes.key}")
+      # console.log("filter added #{model.attributes.key}")
       Backbone.trigger('filters:created', model)

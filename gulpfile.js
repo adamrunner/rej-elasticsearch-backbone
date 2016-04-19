@@ -9,6 +9,7 @@ var handlebars = require('gulp-handlebars');
 var wrap       = require('gulp-wrap');
 var declare    = require('gulp-declare');
 var inject     = require('gulp-inject');
+var series     = require('stream-series');
 
 gulp.task('coffee', function() {
   gulp.src(['src/models/*.coffee','src/views/*.coffee','src/app.coffee'])
@@ -16,10 +17,12 @@ gulp.task('coffee', function() {
     // .pipe(concat('app.js'))
     .pipe(gulp.dest('./public/js/'));
 });
-//TODO: Fix this so it goes in a certain order, maybe? 
+//TODO: Fix this so it goes in a certain order, maybe?
 gulp.task('inject', function(){
+  var vendorStream = gulp.src(['public/js/vendor.js', 'public/js/app.js', 'public/js/templates.js'], {read: false} );
+  var appStream = gulp.src(['public/**/*.js', '!public/js/app.js', '!public/js/vendor.js', '!public/js/templates.js', 'public/**/*.css'], {read: false} );
   gulp.src('public/index.html')
-  .pipe(inject(gulp.src(['public/**/*.js', 'public/**/*.css'], {read: false} ), {starttag: '<!-- inject:{{ext}} -->', relative:true}))
+  .pipe(inject(series(vendorStream, appStream), {starttag: '<!-- inject:{{ext}} -->', relative:true}))
   .pipe(gulp.dest('public'));
 })
 
@@ -47,7 +50,7 @@ gulp.task('templates', function(){
 //Watch task
 
 gulp.task('watch',function() {
-  // gulp.watch('src/index.html', ['copy']);
+  gulp.watch('src/index.html', ['copy', 'inject']);
   gulp.watch('src/**/*.coffee', ['coffee', 'inject']);
   gulp.watch('src/**/*.js', ['browserify']);
   gulp.watch('sass/**/*.scss',['styles', 'inject']);

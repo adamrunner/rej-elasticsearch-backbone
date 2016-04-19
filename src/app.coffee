@@ -4,7 +4,7 @@ client = new (elasticsearch.Client)(
     'https://251a506566f18dc3001.qbox.io'
     'https://251a506566f18dc3002.qbox.io'
   ]
-  log: 'trace'
+  # log: 'trace'
   )
 
 aggregations = client.search(
@@ -18,16 +18,16 @@ aggregations = client.search(
     'product_type': 'terms': 'field': 'product_type'
     'always_free_to_ship': 'terms': 'field': 'always_free_to_ship')
 
-
+App = {}
 $ ->
-  appView = new App.MainView
+  appView = new App.MainView(el: $("#app"))
   window.productsCollection = new App.Products
   searchView = new App.SearchView({client: client, collection: productsCollection})
   searchControlsView = new App.SearchControlsView
   window.filters = new App.Filters()
   aggregations.then (body) =>
     for filterType, aggregation of body.aggregations
-      new App.FilterGroupView({filterType: filterType})
+      new App.FilterGroupView({filterType: filterType, parentView: appView})
       for bucket in aggregation.buckets
         bucket.filterType = filterType
         window.filters.push( new App.Filter(bucket) )

@@ -23,4 +23,4 @@ class App.SearchControlsView extends Backbone.View
 
   render: () ->
     @$el.html(@template())
-    $("#app").append(@$el)
+    $("#appForm").append(@$el)
