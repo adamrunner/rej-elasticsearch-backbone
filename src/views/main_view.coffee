@@ -7,10 +7,7 @@ class App.MainView extends Backbone.View
     @render()
   render: ->
     @$el.html(@template())
+
   newFilterView: (filterModel) ->
     # console.log("Creating new filter view for #{filterModel.attributes.key}")
     new App.FilterView({model: filterModel, parentView: @})
-
-  newFilterGroupView: () ->
-    console.log("creating new filter group view")
-    new App.FilterGroupView()

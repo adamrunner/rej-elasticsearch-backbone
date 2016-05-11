@@ -12,7 +12,7 @@ var inject     = require('gulp-inject');
 var series     = require('stream-series');
 
 gulp.task('coffee', function() {
-  gulp.src(['src/models/*.coffee','src/views/*.coffee','src/app.coffee'])
+  gulp.src(['src/routers/*.coffee', 'src/models/*.coffee','src/views/*.coffee','src/app.coffee'])
     .pipe(coffee({bare: true}).on('error', gutil.log))
     // .pipe(concat('app.js'))
     .pipe(gulp.dest('./public/js/'));

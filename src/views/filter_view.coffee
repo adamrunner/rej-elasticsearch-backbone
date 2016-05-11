@@ -5,7 +5,6 @@ class App.FilterView extends Backbone.View
   template: App.templates["filter"]
 
   initialize: (options) ->
-    @listenTo Backbone, 'filters:created', @render
     @options    = options
     @filterType = @model.get('filterType')
     @queryValue = @model.get('key')
@@ -17,18 +16,11 @@ class App.FilterView extends Backbone.View
     $("##{@filterType}").append(@$el)
 
   doFilter: (event) ->
-    #TODO: Filtering should be handled higher up...
-
-    @query = body: query:{}
+    # @parentView.$el.find('.currentFilter').removeClass('currentFilter').prop('checked', false)
+    # @$el.find('input').addClass('currentFilter')
+    @query = {match: {}}
+    @query["match"][@filterType] = @queryValue
     if event.target.checked
-      @query.body.query["match"] = {}
-      @query.body.query.match[@filterType] = @queryValue
-      console.log("applying filter for #{@model.get('key')}")
+      Backbone.trigger('filters:add', @query)
     else
-      @query.body.query["match_all"] = {}
-      console.log("clearing filter for #{@model.get('key')}")
-    # event.preventDefault()
-    # @$el.addClass("active")
-
-
-    Backbone.trigger('filters:change', @query)
+      Backbone.trigger('filters:remove', @query)

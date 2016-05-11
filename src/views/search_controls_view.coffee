@@ -1,26 +1,14 @@
 class App.SearchControlsView extends Backbone.View
   events:
-    'change #perPage' : "updateResults"
-    'click #clearFilters' : "clearFilters"
+    'change #perPage' : "updatePageCount"
   template: App.templates['search_controls']
-  className: 'col-xs-12'
 
   initialize: (options) ->
-    @query = {}
+    @perPage = 10
     @render()
 
-  updateResults: ->
-    @updateQuery()
-    Backbone.trigger('filters:change', @query)
-
-  updateQuery: () ->
-    perPage = @$el.find('#perPage').val()
-    @query = {size: perPage}
-
-  clearFilters: () ->
-    Backbone.trigger('filters:clear')
-    @$el.html(@template())
-
+  updatePageCount: () ->
+    @perPage = parseInt(@$el.find('#perPage').val())
+    Backbone.trigger('page_size:change', @perPage)
   render: () ->
     @$el.html(@template())
-    $("#appForm").append(@$el)

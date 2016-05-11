@@ -12,3 +12,7 @@ class App.Filters extends Backbone.Collection
     @on "add", (model) ->
       # console.log("filter added #{model.attributes.key}")
       Backbone.trigger('filters:created', model)
+
+class App.Category extends Backbone.Model
+  initialize: (options) ->
+    @set('showUrl', "show/#{@get('category_fullpath')}")
