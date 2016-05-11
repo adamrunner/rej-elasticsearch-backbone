@@ -28,9 +28,11 @@ class App.PaginationView extends Backbone.View
     @$el.find('.disabled').removeClass('disabled')
 
   disablePrev: () ->
+    @enableControls()
     @$el.find('#prevPage').parent('li').addClass('disabled')
 
   disableNext: () ->
+    @enableControls()
     @$el.find('#nextPage').parent('li').addClass('disabled')
   render: () ->
     @$el.html(@template({currentPage: @currentPage}))

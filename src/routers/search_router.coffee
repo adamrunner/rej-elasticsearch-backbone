@@ -10,6 +10,8 @@ client = new (elasticsearch.Client)(
 categories = [
   new App.Category({title: "Pendants", category_fullpath: 'lighting_pendants'}),
   new App.Category({title: "Flush Mount Lighting", category_fullpath: 'lighting_flush-mounts'})
+  new App.Category({title: "Chandeliers", category_fullpath: 'lighting_chandeliers'})
+  new App.Category({title: "Wall Sconces", category_fullpath: 'lighting_wall-sconces'})
 ]
 aggregations_query =
   'index': 'development-categories-products'

@@ -40,10 +40,12 @@ class App.ResultsView extends Backbone.View
     @currentQuery.size = @perPage
     @doSearch()
 
+  updateFromCount: () ->
+    @fromCount         = (@currentPage * @perPage) - @perPage
+    @currentQuery.from = @fromCount
   changePage: (page) ->
     @currentPage       = page
-    @fromCount         = (page * @perPage) - @perPage
-    @currentQuery.from = @fromCount
+    @updateFromCount()
     @doSearch()
 
   triggerPageEvent: () ->
@@ -64,15 +66,16 @@ class App.ResultsView extends Backbone.View
       @collection.reset productAttributes
 
   removeFilter: (filter) ->
+    @currentPage = 1
+    @updateFromCount()
+    #TODO: This isn't the correct behavior, we should be specifically _removing_ the filter that we want to, not resetting all of them.
     @currentQuery.body.query.bool.must = [@originalQuery]
     @doSearch()
 
   addFilter: (filter) ->
-    console.log("Adding filter")
-    console.log(filter)
+    @currentPage = 1
+    @updateFromCount()
     @currentQuery.body.query.bool.must.push filter
-    console.log("query result")
-    console.log(@currentQuery)
     @doSearch()
 
   render: () ->
