@@ -12,6 +12,5 @@ class App.CategoryView extends Backbone.View
     $("#categories").append(@$el)
 
   chooseCategory: (event) ->
-    # console.log('choosing category')
     event.preventDefault()
     Backbone.trigger 'router:go', @model.get('showUrl')

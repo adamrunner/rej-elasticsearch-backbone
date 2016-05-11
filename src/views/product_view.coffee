@@ -4,6 +4,5 @@ class App.ProductView extends Backbone.View
   initialize: (options) ->
     @render()
   render: () ->
-    # console.log("rendering product view for #{@model.attributes.name}")
     @$el.html(@template(@model.attributes))
     @

@@ -4,7 +4,7 @@ class App.SearchControlsView extends Backbone.View
   template: App.templates['search_controls']
 
   initialize: (options) ->
-    @perPage = 10
+    @perPage = options.perPage || 10
     @render()
 
   updatePageCount: () ->

@@ -1,13 +1,16 @@
 class App.ResultsView extends Backbone.View
   id: "resultView"
   className: "row"
-  template: App.templates["search_summary"]
+  blank_template: App.templates["blank_results"]
   initialize: (options) ->
     @listenTo(@collection, 'reset', @render)
     @listenTo(Backbone, 'filters:add', @addFilter)
     @listenTo(Backbone, 'filters:remove', @removeFilter)
     @listenTo(Backbone, 'page_size:change', @changePageSize)
-    @perPage = options.perPage || 10
+    @listenTo(Backbone, 'page:change', @changePage)
+    @perPage     = options.perPage || 10
+    @currentPage = options.currentPage || 1
+    @fromCount   = (@currentPage * @perPage) - @perPage
     @originalQuery = options.query
     @currentQuery ||=
       'index': 'development-categories-products'
@@ -33,10 +36,24 @@ class App.ResultsView extends Backbone.View
     @doSearch()
 
   changePageSize: (page_size) ->
-    @currentQuery.size = page_size
+    @perPage           = page_size
+    @currentQuery.size = @perPage
     @doSearch()
 
+  changePage: (page) ->
+    @currentPage       = page
+    @fromCount         = (page * @perPage) - @perPage
+    @currentQuery.from = @fromCount
+    @doSearch()
+
+  triggerPageEvent: () ->
+    if @currentPage == 1
+      Backbone.trigger('page:first')
+    if @currentPage * @perPage > @maxResults
+      Backbone.trigger('page:last')
+
   doSearch: () ->
+    @triggerPageEvent()
     # _.extend( @currentQuery, query )
     @client.search(@currentQuery).then (results) =>
       @results = results.hits.hits
@@ -59,11 +76,15 @@ class App.ResultsView extends Backbone.View
     @doSearch()
 
   render: () ->
-    productViews = @collection.map (product) =>
-      new App.ProductView(model:product).$el
+    if @collection.length > 0
+      new App.ResultsSummaryView({perPage: @perPage, fromCount: @fromCount, currentPage: @currentPage, maxResults: @maxResults, el: $("#countSummary")})
+      productViews = @collection.map (product) =>
+        new App.ProductView(model:product).$el
 
-    @$el.html(productViews)
+      @$el.html(productViews)
 
+    else
+      @$el.html(@blank_template())
+      $("#countSummary").html('')
     $("#products").html(@$el)
-    new App.ResultsSummaryView({results: @results.hits.hits.length, total: @maxResults, el: $("#countSummary")})
     @

@@ -36,11 +36,15 @@ class App.SearchRouter extends Backbone.Router
     @listenTo Backbone, 'router:go', @go
     @listenTo Backbone, 'filter_groups:build', @buildFilterGroups
     @listenTo Backbone, 'filters:build', @buildFilters
-    @appView = new App.MainView(el: $("#app"))
-    @searchControlsView = new App.SearchControlsView(el: $("#search_controls"))
+    @listenTo Backbone, 'page_size:change', @storePageSize
+    @appView            = new App.MainView(el          : $("#app"))
+    @searchControlsView = new App.SearchControlsView(el: $("#searchControls"))
+    @paginationView     = new App.PaginationView(el    : $("#pagination"))
     for category in categories
       @categoryViews.push new App.CategoryView(model: category)
 
+  storePageSize: (pageSize) ->
+    @pageSize = pageSize
   go: (route) ->
     # debugger
     return false if document.location.hash.slice(1) == route
@@ -63,7 +67,7 @@ class App.SearchRouter extends Backbone.Router
     @resultsView.remove()
 
   buildResultsView: () ->
-    @resultsView = new App.ResultsView({client: client, collection: productsCollection, query: @query})
+    @resultsView = new App.ResultsView({client: client, collection: productsCollection, query: @query, perPage: @pageSize})
 
   getAggregations: () ->
     aggregations_query.body.query.bool.must = [@query]

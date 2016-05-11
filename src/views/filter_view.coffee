@@ -16,8 +16,6 @@ class App.FilterView extends Backbone.View
     $("##{@filterType}").append(@$el)
 
   doFilter: (event) ->
-    # @parentView.$el.find('.currentFilter').removeClass('currentFilter').prop('checked', false)
-    # @$el.find('input').addClass('currentFilter')
     @query = {match: {}}
     @query["match"][@filterType] = @queryValue
     if event.target.checked
