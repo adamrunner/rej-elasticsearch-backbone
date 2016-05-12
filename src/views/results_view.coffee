@@ -18,45 +18,41 @@ class App.ResultsView extends Backbone.View
       'type': 'product'
       'body':
         'sort': 'sort_order' : 'asc'
-        'query':
+        'query': 'match_all' : {}
+        'filter':
           'bool':
             'must': [@originalQuery]
+            'should': []
     @client = options.client
-    @doSearch()
-
-  clearFilters: () ->
-    @currentQuery =
-      'index': 'development-categories-products'
-      'size': @perPage
-      'type': 'product'
-      'body':
-        'query':
-          'bool':
-            'must': [@originalQuery]
     @doSearch()
 
   changePageSize: (page_size) ->
     @perPage           = page_size
     @currentQuery.size = @perPage
+    @updateFromCount()
     @doSearch()
 
   updateFromCount: () ->
     @fromCount         = (@currentPage * @perPage) - @perPage
     @currentQuery.from = @fromCount
+
   changePage: (page) ->
-    @currentPage       = page
+    @currentPage = page
     @updateFromCount()
     @doSearch()
 
   triggerPageEvent: () ->
+    Backbone.trigger('page:enable')
+
     if @currentPage == 1
+      console.log('first page')
       Backbone.trigger('page:first')
-    if @currentPage * @perPage > @maxResults
+
+    if (@currentPage * @perPage) > @maxResults
+      console.log('last page')
       Backbone.trigger('page:last')
 
   doSearch: () ->
-    @triggerPageEvent()
-    # _.extend( @currentQuery, query )
     @client.search(@currentQuery).then (results) =>
       @results = results.hits.hits
       @maxResults = results.hits.total
@@ -64,18 +60,21 @@ class App.ResultsView extends Backbone.View
         _.extend(result._source, { id: result._id})
         result._source
       @collection.reset productAttributes
-
+      @triggerPageEvent()
   removeFilter: (filter) ->
     @currentPage = 1
     @updateFromCount()
-    #TODO: This isn't the correct behavior, we should be specifically _removing_ the filter that we want to, not resetting all of them.
-    @currentQuery.body.query.bool.must = [@originalQuery]
+    shouldArray = @currentQuery.body.filter.bool.should
+    newShouldArray = _.reject(shouldArray, (shouldObject) =>
+      _.isMatch(shouldObject.term, filter.term)
+    )
+    @currentQuery.body.filter.bool.should = newShouldArray
     @doSearch()
 
   addFilter: (filter) ->
     @currentPage = 1
     @updateFromCount()
-    @currentQuery.body.query.bool.must.push filter
+    @currentQuery.body.filter.bool.should.push filter
     @doSearch()
 
   render: () ->

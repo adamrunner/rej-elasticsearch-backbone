@@ -59,7 +59,7 @@ class App.SearchRouter extends Backbone.Router
     @buildResultsView()
 
   showCategory: (category_path) ->
-    @query = 'match': 'category_fullpath' : "#{category_path}"
+    @query = 'term': 'category_fullpath' : "#{category_path}"
     @getAggregations()
     @buildResultsView()
 

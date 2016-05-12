@@ -16,8 +16,8 @@ class App.FilterView extends Backbone.View
     $("##{@filterType}").append(@$el)
 
   doFilter: (event) ->
-    @query = {match: {}}
-    @query["match"][@filterType] = @queryValue
+    @query = {term: {}}
+    @query["term"][@filterType] = @queryValue
     if event.target.checked
       Backbone.trigger('filters:add', @query)
     else
