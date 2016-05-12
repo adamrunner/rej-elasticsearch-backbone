@@ -39,6 +39,7 @@ class App.SearchRouter extends Backbone.Router
     @listenTo Backbone, 'filter_groups:build', @buildFilterGroups
     @listenTo Backbone, 'filters:build', @buildFilters
     @listenTo Backbone, 'page_size:change', @storePageSize
+    @pageSize = 12
     @appView            = new App.MainView(el          : $("#app"))
     @searchControlsView = new App.SearchControlsView(el: $("#searchControls"))
     @paginationView     = new App.PaginationView(el    : $("#pagination"))
@@ -47,6 +48,7 @@ class App.SearchRouter extends Backbone.Router
 
   storePageSize: (pageSize) ->
     @pageSize = pageSize
+
   go: (route) ->
     # debugger
     return false if document.location.hash.slice(1) == route

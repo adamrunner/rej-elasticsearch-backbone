@@ -8,7 +8,7 @@ class App.ResultsView extends Backbone.View
     @listenTo(Backbone, 'filters:remove', @removeFilter)
     @listenTo(Backbone, 'page_size:change', @changePageSize)
     @listenTo(Backbone, 'page:change', @changePage)
-    @perPage     = options.perPage || 10
+    @perPage     = options.perPage || 12
     @currentPage = options.currentPage || 1
     @fromCount   = (@currentPage * @perPage) - @perPage
     @originalQuery = options.query
