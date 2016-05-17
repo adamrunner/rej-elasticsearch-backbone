@@ -13,7 +13,7 @@ class App.ResultsView extends Backbone.View
     @fromCount   = (@currentPage * @perPage) - @perPage
     @originalQuery = options.query
     @currentQuery ||=
-      'index': 'development-categories-products'
+      'index': window.index_name
       'size': @perPage
       'type': 'product'
       'body':

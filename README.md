@@ -11,10 +11,4 @@ To run:
 1. `npm install`
 1. `gulp`
 1. open a browser to [http://localhost:8000](http://localhost:8000)
-1. see the results of the different aggregations
-
-todo:
-
-1. return results from elasticsearch when filters are applied
-1. add functionality into filter view to apply a filter model to a search
-1. lots more
+1. See products, and the product type filter.

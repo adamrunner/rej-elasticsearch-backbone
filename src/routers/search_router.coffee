@@ -7,14 +7,16 @@ client = new (elasticsearch.Client)(
   ]
   log: 'trace'
 )
+# window.index_name = 'categories-nested-products'
+window.index_name = 'development-products-categories'
 categories = [
-  new App.Category({title: "Pendants", category_fullpath: 'lighting_pendants'}),
-  new App.Category({title: "Flush Mount Lighting", category_fullpath: 'lighting_flush-mounts'})
-  new App.Category({title: "Chandeliers", category_fullpath: 'lighting_chandeliers'})
-  new App.Category({title: "Wall Sconces", category_fullpath: 'lighting_wall-sconces'})
+  new App.Category({title: "Pendants", fullpath: 'lighting_pendants'}),
+  new App.Category({title: "Flush Mount Lighting", fullpath: 'lighting_flush-mounts'})
+  new App.Category({title: "Chandeliers", fullpath: 'lighting_chandeliers'})
+  new App.Category({title: "Wall Sconces", fullpath: 'lighting_wall-sconces'})
 ]
 aggregations_query =
-  'index': 'development-categories-products'
+  'index': window.index_name
   'size': 0
   'type': 'product'
   'body':
@@ -61,7 +63,7 @@ class App.SearchRouter extends Backbone.Router
     @buildResultsView()
 
   showCategory: (category_path) ->
-    @query = 'term': 'category_fullpath' : "#{category_path}"
+    @query = 'term': 'fullpath' : "#{category_path}"
     @getAggregations()
     @buildResultsView()
 
