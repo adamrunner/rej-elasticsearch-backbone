@@ -10,11 +10,13 @@ client = new (elasticsearch.Client)(
 # window.index_name = 'categories-nested-products'
 window.index_name = 'development-products-categories'
 categories = [
-  new App.Category({title: "Pendants", fullpath: 'lighting_pendants'}),
-  new App.Category({title: "Flush Mount Lighting", fullpath: 'lighting_flush-mounts'})
-  new App.Category({title: "Chandeliers", fullpath: 'lighting_chandeliers'})
-  new App.Category({title: "Wall Sconces", fullpath: 'lighting_wall-sconces'})
+  new App.Category({title: "Pendants", category_id: '573bfd6fbe8a5c7232001ab3', slug:"pendants" }),
+  new App.Category({title: "Flush Mount Lighting", category_id: '573bfd6fbe8a5c7232001ab5', slug:"flush-mount-lighting" })
+  new App.Category({title: "Chandeliers", category_id: '573bfd6fbe8a5c7232001ab7', slug:"chandeliers" })
+  new App.Category({title: "Wall Sconces", category_id: '573bfd6fbe8a5c7232001ab9', slug:"wall-sconces"})
 ]
+categoriesCollection = new App.Categories(categories)
+
 aggregations_query =
   'index': window.index_name
   'size': 0
@@ -62,8 +64,9 @@ class App.SearchRouter extends Backbone.Router
     @getAggregations()
     @buildResultsView()
 
-  showCategory: (category_path) ->
-    @query = 'term': 'fullpath' : "#{category_path}"
+  showCategory: (slug) ->
+    category = categoriesCollection.where(slug: slug)[0]
+    @query = 'term': 'category_ids' : category.get('category_id')
     @getAggregations()
     @buildResultsView()
 

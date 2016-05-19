@@ -15,4 +15,7 @@ class App.Filters extends Backbone.Collection
 
 class App.Category extends Backbone.Model
   initialize: (options) ->
-    @set('showUrl', "show/#{@get('category_fullpath')}")
+    @set('showUrl', "show/#{@get('slug')}")
+
+class App.Categories extends Backbone.Collection
+  model: App.Category
