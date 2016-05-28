@@ -17,7 +17,7 @@ class App.ResultsView extends Backbone.View
       'size': @perPage
       'type': 'product'
       'body':
-        'sort': 'category.sort_order' : 'asc'
+        'sort': 'categories.sort_order' : 'asc'
         'query': 'match_all' : {}
         'filter':
           'bool':

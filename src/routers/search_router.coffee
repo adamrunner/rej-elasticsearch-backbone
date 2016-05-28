@@ -9,12 +9,14 @@ client = new (elasticsearch.Client)(
 )
 # window.index_name = 'categories-nested-products'
 window.index_name = 'development-products-categories'
-categories = [
-  new App.Category({title: "Pendants", category_id: '573bfd6fbe8a5c7232001ab3', slug:"pendants" }),
-  new App.Category({title: "Flush Mount Lighting", category_id: '573bfd6fbe8a5c7232001ab5', slug:"flush-mount-lighting" })
-  new App.Category({title: "Chandeliers", category_id: '573bfd6fbe8a5c7232001ab7', slug:"chandeliers" })
-  new App.Category({title: "Wall Sconces", category_id: '573bfd6fbe8a5c7232001ab9', slug:"wall-sconces"})
-]
+# categories = [
+#   new App.Category({title: "Pendants", category_id: '57489773be8a5c06c3000003', slug:"pendants" }),
+#   new App.Category({title: "Flush Mount Lighting", category_id: '57489783be8a5c06c3000005', slug:"flush-mount-lighting" })
+#   new App.Category({title: "Chandeliers", category_id: '574897bebe8a5c06c3000007', slug:"chandeliers" })
+#   new App.Category({title: "Wall Sconces", category_id: '574897cabe8a5c06c3000009', slug:"wall-sconces"})
+# ]
+
+categories = [{"title":"Pendants","slug":"pendants","category_id":"57489773be8a5c06c3000003"},{"title":"Flush Mount Lighting","slug":"flush-mount-lighting","category_id":"57489783be8a5c06c3000005"},{"title":"Chandeliers","slug":"chandeliers","category_id":"574897bebe8a5c06c3000007"},{"title":"Wall Sconces","slug":"wall-sconces","category_id":"574897cabe8a5c06c3000009"},{"title":"String Lights","slug":"string-lights","category_id":"57462758be8a5cb7850002b9"},{"title":"Table \u0026 Desk Lamps","slug":"table-\u0026-desk-lamps","category_id":"5749d6c2be8a5c06c300020a"},{"title":"Floor Lamps","slug":"floor-lamps","category_id":"5749d6d1be8a5c06c300020c"},{"title":"Pin-Ups \u0026 Plug-Ins","slug":"pin-ups-\u0026-plug-ins","category_id":"5749d6e1be8a5c06c300020e"}]
 categoriesCollection = new App.Categories(categories)
 
 aggregations_query =
@@ -27,6 +29,7 @@ aggregations_query =
         'must': []
     'aggs':
       'product_type': 'terms': 'field': 'product_type'
+      'finish' : 'terms' : 'field' : 'finish'
       # 'category_fullpath' : 'terms' : 'field' : 'category_fullpath'
 
 class App.SearchRouter extends Backbone.Router
@@ -47,7 +50,7 @@ class App.SearchRouter extends Backbone.Router
     @appView            = new App.MainView(el          : $("#app"))
     @searchControlsView = new App.SearchControlsView(el: $("#searchControls"))
     @paginationView     = new App.PaginationView(el    : $("#pagination"))
-    for category in categories
+    categoriesCollection.each (category) =>
       @categoryViews.push new App.CategoryView(model: category)
 
   storePageSize: (pageSize) ->
@@ -87,8 +90,9 @@ class App.SearchRouter extends Backbone.Router
   buildFilterGroups: (body) ->
     window.filters = new App.Filters()
     for filterType, aggregation of body.aggregations
-      @filterGroupViews.push new App.FilterGroupView({filterType: filterType})
-      Backbone.trigger('filters:build', aggregation.buckets, filterType)
+      if aggregation.buckets.length > 0
+        @filterGroupViews.push new App.FilterGroupView({filterType: filterType})
+        Backbone.trigger('filters:build', aggregation.buckets, filterType)
 
   buildFilters: (buckets, filterType) ->
     for bucket in buckets
